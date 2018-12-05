@@ -1,19 +1,4 @@
-# TARGET #
-
 TARGET := 3DS
-LIBRARY := 0
-
-ifeq ($(TARGET),3DS)
-    ifeq ($(strip $(DEVKITPRO)),)
-        $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro")
-    endif
-
-    ifeq ($(strip $(DEVKITARM)),)
-        $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-    endif
-endif
-
-# COMMON CONFIGURATION #
 
 NAME := FBI
 
@@ -21,32 +6,33 @@ BUILD_DIR := build
 OUTPUT_DIR := output
 INCLUDE_DIRS := include
 SOURCE_DIRS := source
+ROMFS_DIR := romfs
 
-EXTRA_OUTPUT_FILES :=
+LIBRARY_DIRS += $(DEVKITPRO)/libctru $(DEVKITPRO)/portlibs/armv6k $(DEVKITPRO)/portlibs/3ds
+LIBRARIES += jansson z citro3d ctru
 
-LIBRARY_DIRS := $(DEVKITPRO)/libctru
-LIBRARIES := citro3d ctru m
+EXTRA_OUTPUT_FILES := servefiles
 
-BUILD_FLAGS := -DLIBKHAX_AS_LIB -DVERSION_STRING="\"`git describe --tags --abbrev=0`\""
-RUN_FLAGS :=
+BUILD_FLAGS := -Wno-format-truncation
 
-# 3DS CONFIGURATION #
+VERSION_PARTS := $(subst ., ,$(shell git describe --tags --abbrev=0))
 
-TITLE := $(NAME)
-DESCRIPTION := Open source CIA installer.
+VERSION_MAJOR := $(word 1, $(VERSION_PARTS))
+VERSION_MINOR := $(word 2, $(VERSION_PARTS))
+VERSION_MICRO := $(word 3, $(VERSION_PARTS))
+
+DESCRIPTION := Open source title manager.
 AUTHOR := Steveice10
+
 PRODUCT_CODE := CTR-P-CFBI
 UNIQUE_ID := 0xF8001
 
-SYSTEM_MODE := 64MB
-SYSTEM_MODE_EXT := Legacy
+ICON_FLAGS := --flags visible,ratingrequired,recordusage --cero 153 --esrb 153 --usk 153 --pegigen 153 --pegiptr 153 --pegibbfc 153 --cob 153 --grb 153 --cgsrr 153
 
-ICON_FLAGS :=
-
-ROMFS_DIR := romfs
-BANNER_AUDIO := meta/audio.wav
-BANNER_IMAGE := meta/banner.cgfx
-ICON := meta/icon.png
+BANNER_AUDIO := meta/audio_3ds.wav
+BANNER_IMAGE := meta/banner_3ds.cgfx
+ICON := meta/icon_3ds.png
+LOGO := meta/logo_3ds.bcma.lz
 
 # INTERNAL #
 
